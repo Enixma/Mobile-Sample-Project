@@ -54,6 +54,8 @@ public class FavoriteListAdapter extends RecyclerView.Adapter<FavoriteListAdapte
         Glide.with(holder.binding.imageView.getContext())
                 .load(items.get(position).getThumbImageURL())
                 .fitCenter()
+                .error(R.drawable.ic_default_image)
+                .placeholder(R.drawable.ic_default_image)
                 .into(holder.binding.imageView);
     }
 

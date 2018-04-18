@@ -1,5 +1,7 @@
 package com.enixma.sample.mobile.presentation.favorite;
 
+import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,8 +16,11 @@ import com.enixma.sample.mobile.data.di.MobileDataModule;
 import com.enixma.sample.mobile.data.di.ServiceFactoryModule;
 import com.enixma.sample.mobile.data.entity.MobileEntity;
 import com.enixma.sample.mobile.databinding.LayoutFavoriteListFragmentBinding;
+import com.enixma.sample.mobile.presentation.detail.DetailActivity;
+import com.enixma.sample.mobile.presentation.detail.mapper.ListItemToModelMapper;
 import com.enixma.sample.mobile.presentation.favorite.di.DaggerFavoriteListComponent;
 import com.enixma.sample.mobile.presentation.favorite.di.FavoriteListModule;
+import com.enixma.sample.mobile.presentation.favorite.mapper.EntityToListItemMapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,10 +31,11 @@ import javax.inject.Inject;
  * Created by nakarinj on 18/4/2018 AD.
  */
 
-public class FavoriteListFragment extends Fragment implements FavoriteListContract.View{
+public class FavoriteListFragment extends Fragment implements FavoriteListContract.View {
 
     private static final String SORT_BY = "sortBy";
     private LayoutFavoriteListFragmentBinding binding;
+    private FavoriteListViewModel viewModel;
     private FavoriteListAdapter adapter;
     private ArrayList<FavoriteListItem> items;
     private String sortBy;
@@ -49,6 +55,7 @@ public class FavoriteListFragment extends Fragment implements FavoriteListContra
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        viewModel = ViewModelProviders.of(this).get(FavoriteListViewModel.class);
         this.sortBy = getArguments().getString(SORT_BY);
         DaggerFavoriteListComponent.builder()
                 .serviceFactoryModule(new ServiceFactoryModule(getContext()))
@@ -62,6 +69,7 @@ public class FavoriteListFragment extends Fragment implements FavoriteListContra
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.layout_favorite_list_fragment, container, false);
+        binding.setModel(viewModel);
         return binding.getRoot();
     }
 
@@ -84,6 +92,8 @@ public class FavoriteListFragment extends Fragment implements FavoriteListContra
     @Override
     public void populateList(List<MobileEntity> mobileEntityList) {
 
+        viewModel.getHasData().set(true);
+
         if (items == null) {
             items = new ArrayList<>();
         }
@@ -93,7 +103,7 @@ public class FavoriteListFragment extends Fragment implements FavoriteListContra
         adapter = new FavoriteListAdapter(items, new FavoriteListAdapter.OnItemListener() {
             @Override
             public void onItemClick(int position) {
-                goToDetailPage();
+                goToDetailPage(position);
             }
 
         });
@@ -102,28 +112,20 @@ public class FavoriteListFragment extends Fragment implements FavoriteListContra
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         binding.listView.setLayoutManager(layoutManager);
         binding.listView.setAdapter(adapter);
-
         adapter.notifyDataSetChanged();
     }
 
-    private void goToDetailPage() {
-        // go to detail page
+    private void goToDetailPage(int position) {
+        Intent intent = DetailActivity.getIntent(getActivity());
+        intent.putExtra(DetailActivity.MOBILE, ListItemToModelMapper.map(items.get(position)));
+        startActivity(intent);
     }
 
     private ArrayList<FavoriteListItem> getMobileListItems(List<MobileEntity> mobileEntityList) {
 
         ArrayList<FavoriteListItem> listItem = new ArrayList();
         for (MobileEntity mobileEntity : mobileEntityList) {
-            FavoriteListItem favoriteListItem = new FavoriteListItem();
-            favoriteListItem.setId(mobileEntity.getId());
-            favoriteListItem.setBrand(mobileEntity.getBrand());
-            favoriteListItem.setName(mobileEntity.getName());
-            favoriteListItem.setDescription(mobileEntity.getDescription());
-            favoriteListItem.setThumbImageURL(mobileEntity.getThumbImageURL());
-            favoriteListItem.setPrice("Price: $" + mobileEntity.getPrice());
-            favoriteListItem.setRating("Rating:" + mobileEntity.getRating());
-            favoriteListItem.setFavorite(mobileEntity.isFavorite());
-            listItem.add(favoriteListItem);
+            listItem.add(EntityToListItemMapper.map(getContext(), mobileEntity));
         }
 
         return listItem;
@@ -131,7 +133,7 @@ public class FavoriteListFragment extends Fragment implements FavoriteListContra
 
     @Override
     public void displayNoData() {
-        // display no data found
+        viewModel.getHasData().set(false);
     }
 
     public void updateSortCriteria(String sortBy) {
@@ -142,8 +144,6 @@ public class FavoriteListFragment extends Fragment implements FavoriteListContra
         } else {
             presenter.sortRatingFiveToOne();
         }
-
     }
-
 
 }

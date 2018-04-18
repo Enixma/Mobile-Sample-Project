@@ -46,7 +46,7 @@ public class MobileListPresenter implements MobileListContract.Action, Lifecycle
                                GetAllMobileUseCase getAllMobileUseCase,
                                DownloadMobileUseCase downloadMobileUseCase,
                                SaveFavoriteUseCase saveFavoriteUseCase,
-                               SortMobileUseCase sortMobileUseCase){
+                               SortMobileUseCase sortMobileUseCase) {
         this.view = view;
         this.getAllMobileUseCase = getAllMobileUseCase;
         this.downloadMobileUseCase = downloadMobileUseCase;
@@ -56,7 +56,7 @@ public class MobileListPresenter implements MobileListContract.Action, Lifecycle
 
     @Override
     public void getMobileList() {
-        if(isLoading){
+        if (isLoading) {
             return;
         }
         isLoading = true;
@@ -70,11 +70,11 @@ public class MobileListPresenter implements MobileListContract.Action, Lifecycle
                 }).subscribe();
     }
 
-    private void processGetMobileListResult(GetAllMobileUseCaseResult result){
-        if(result.getStatus() == GetAllMobileUseCase.Status.SUCCESS){
+    private void processGetMobileListResult(GetAllMobileUseCaseResult result) {
+        if (result.getStatus() == GetAllMobileUseCase.Status.SUCCESS) {
             mobileEntityList = result.getMobileEntities();
             sortList();
-        } else{
+        } else {
             view.displayNoData();
             isLoading = false;
             downloadMobileList();
@@ -84,7 +84,7 @@ public class MobileListPresenter implements MobileListContract.Action, Lifecycle
     @Override
     public void downloadMobileList() {
 
-        if(isLoading){
+        if (isLoading) {
             view.stopRefreshLoading();
             return;
         }
@@ -99,14 +99,14 @@ public class MobileListPresenter implements MobileListContract.Action, Lifecycle
                 }).subscribe();
     }
 
-    private void processDownloadMobileListResult(DownloadMobileUseCaseResult result){
+    private void processDownloadMobileListResult(DownloadMobileUseCaseResult result) {
 
         view.stopRefreshLoading();
 
-        if(result.getStatus() == DownloadMobileUseCase.Status.SUCCESS){
+        if (result.getStatus() == DownloadMobileUseCase.Status.SUCCESS) {
             isLoading = false;
             getMobileList();
-        } else{
+        } else {
             isLoading = false;
             view.displayNoData();
         }
@@ -114,24 +114,24 @@ public class MobileListPresenter implements MobileListContract.Action, Lifecycle
 
     @Override
     public void sortPriceLowToHigh() {
-        sortBy =  SortMobileUseCase.SortBy.PRICE_LOW_TO_HIGH;
+        sortBy = SortMobileUseCase.SortBy.PRICE_LOW_TO_HIGH;
         getMobileList();
     }
 
     @Override
     public void sortPriceHighToLow() {
-        sortBy =  SortMobileUseCase.SortBy.PRICE_HIGH_TO_LOW;
+        sortBy = SortMobileUseCase.SortBy.PRICE_HIGH_TO_LOW;
         getMobileList();
     }
 
     @Override
     public void sortRatingFiveToOne() {
-        sortBy =  SortMobileUseCase.SortBy.RATING_FIVE_TO_ONE;
+        sortBy = SortMobileUseCase.SortBy.RATING_FIVE_TO_ONE;
         getMobileList();
     }
 
-    private void sortList(){
-        if(mobileEntityList == null || mobileEntityList.isEmpty()){
+    private void sortList() {
+        if (mobileEntityList == null || mobileEntityList.isEmpty()) {
             isLoading = false;
             return;
         }
@@ -160,20 +160,20 @@ public class MobileListPresenter implements MobileListContract.Action, Lifecycle
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    public void onPresenterDestroy(){
-        if(getAllMobileDisposable != null){
+    public void onPresenterDestroy() {
+        if (getAllMobileDisposable != null) {
             getAllMobileDisposable.dispose();
         }
 
-        if(downloadMobileDisposable != null){
+        if (downloadMobileDisposable != null) {
             downloadMobileDisposable.dispose();
         }
 
-        if(saveFavoriteDisposable != null){
+        if (saveFavoriteDisposable != null) {
             saveFavoriteDisposable.dispose();
         }
 
-        if(sortMobileDisposable != null){
+        if (sortMobileDisposable != null) {
             sortMobileDisposable.dispose();
         }
     }

@@ -21,7 +21,7 @@ public class MobileEntity extends RealmObject{
     private double rating;
     private double price;
     private boolean isFavorite;
-    RealmList<MobileImageEntity> mobileImageEntities;
+    private RealmList<MobileImageEntity> mobileImageEntities;
 
     public int getId() {
         return id;

@@ -15,6 +15,17 @@ public class MobileListItem {
     private String rating;
     private boolean isFavorite;
 
+    public MobileListItem(int id, String brand, String name, String description, String thumbImageURL, String price, String rating, boolean isFavorite) {
+        this.id = id;
+        this.brand = brand;
+        this.name = name;
+        this.description = description;
+        this.thumbImageURL = thumbImageURL;
+        this.price = price;
+        this.rating = rating;
+        this.isFavorite = isFavorite;
+    }
+
     public int getId() {
         return id;
     }
@@ -30,6 +41,7 @@ public class MobileListItem {
     public void setBrand(String brand) {
         this.brand = brand;
     }
+
     public String getName() {
         return name;
     }

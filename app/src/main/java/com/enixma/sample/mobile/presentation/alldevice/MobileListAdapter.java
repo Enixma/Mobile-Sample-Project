@@ -27,6 +27,7 @@ public class MobileListAdapter extends RecyclerView.Adapter<MobileListAdapter.Vi
 
     public interface OnItemListener {
         void onItemClick(int pos);
+
         void onMarkFavorite(int pos);
     }
 
@@ -52,23 +53,25 @@ public class MobileListAdapter extends RecyclerView.Adapter<MobileListAdapter.Vi
 
     }
 
-    private void markItemFavorite(ViewHolder holder, MobileListItem item){
-        if(item.isFavorite()){
+    private void markItemFavorite(ViewHolder holder, MobileListItem item) {
+        if (item.isFavorite()) {
             holder.binding.imageFavorite.setImageDrawable(ContextCompat.getDrawable(holder.binding.buttonFavorite.getContext(), R.drawable.ic_mark_favorite));
 
-        } else{
-            holder.binding.imageFavorite.setImageDrawable(ContextCompat.getDrawable(holder.binding.buttonFavorite.getContext(),R.drawable.ic_unmark_favorite));
+        } else {
+            holder.binding.imageFavorite.setImageDrawable(ContextCompat.getDrawable(holder.binding.buttonFavorite.getContext(), R.drawable.ic_unmark_favorite));
         }
     }
 
-    private void setItemThumbnail(ViewHolder holder, int position){
+    private void setItemThumbnail(ViewHolder holder, int position) {
         Glide.with(holder.binding.imageView.getContext())
                 .load(items.get(position).getThumbImageURL())
                 .fitCenter()
+                .error(R.drawable.ic_default_image)
+                .placeholder(R.drawable.ic_default_image)
                 .into(holder.binding.imageView);
     }
 
-    private void setViewListener(final ViewHolder holder, final MobileListItem item, final int position){
+    private void setViewListener(final ViewHolder holder, final MobileListItem item, final int position) {
         holder.binding.buttonFavorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,6 +94,7 @@ public class MobileListAdapter extends RecyclerView.Adapter<MobileListAdapter.Vi
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private LayoutMobileListItemBinding binding;
+
         public ViewHolder(LayoutMobileListItemBinding binding) {
             super(binding.getRoot());
             this.binding = binding;

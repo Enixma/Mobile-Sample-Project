@@ -1,5 +1,7 @@
 package com.enixma.sample.mobile.presentation.alldevice;
 
+import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -17,6 +19,9 @@ import com.enixma.sample.mobile.data.entity.MobileEntity;
 import com.enixma.sample.mobile.databinding.LayoutMobileListFragmentBinding;
 import com.enixma.sample.mobile.presentation.alldevice.di.DaggerMobileListComponent;
 import com.enixma.sample.mobile.presentation.alldevice.di.MobileListModule;
+import com.enixma.sample.mobile.presentation.alldevice.mapper.EntityToListItemMapper;
+import com.enixma.sample.mobile.presentation.detail.DetailActivity;
+import com.enixma.sample.mobile.presentation.detail.mapper.ListItemToModelMapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +36,7 @@ public class MobileListFragment extends Fragment implements MobileListContract.V
 
     private static final String SORT_BY = "sortBy";
     private LayoutMobileListFragmentBinding binding;
+    private MobileListViewModel viewModel;
     private MobileListAdapter adapter;
     private ArrayList<MobileListItem> items;
     private String sortBy;
@@ -50,6 +56,7 @@ public class MobileListFragment extends Fragment implements MobileListContract.V
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        viewModel = ViewModelProviders.of(this).get(MobileListViewModel.class);
         this.sortBy = getArguments().getString(SORT_BY);
         DaggerMobileListComponent.builder()
                 .serviceFactoryModule(new ServiceFactoryModule(getContext()))
@@ -62,6 +69,7 @@ public class MobileListFragment extends Fragment implements MobileListContract.V
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.layout_mobile_list_fragment, container, false);
+        binding.setModel(viewModel);
         return binding.getRoot();
     }
 
@@ -82,6 +90,8 @@ public class MobileListFragment extends Fragment implements MobileListContract.V
     @Override
     public void populateList(List<MobileEntity> mobileEntityList) {
 
+        viewModel.getHasData().set(true);
+
         if (items == null) {
             items = new ArrayList<>();
         }
@@ -91,7 +101,7 @@ public class MobileListFragment extends Fragment implements MobileListContract.V
         adapter = new MobileListAdapter(items, new MobileListAdapter.OnItemListener() {
             @Override
             public void onItemClick(int position) {
-                goToDetailPage();
+                goToDetailPage(position);
             }
 
             @Override
@@ -110,32 +120,24 @@ public class MobileListFragment extends Fragment implements MobileListContract.V
         adapter.notifyDataSetChanged();
     }
 
-    private void goToDetailPage() {
-        // go to detail page
+    private void goToDetailPage(int position) {
+        Intent intent = DetailActivity.getIntent(getActivity());
+        intent.putExtra(DetailActivity.MOBILE, ListItemToModelMapper.map(items.get(position)));
+        startActivity(intent);
     }
 
     private ArrayList<MobileListItem> getMobileListItems(List<MobileEntity> mobileEntityList) {
 
         ArrayList<MobileListItem> listItem = new ArrayList();
         for (MobileEntity mobileEntity : mobileEntityList) {
-            MobileListItem mobileListItem = new MobileListItem();
-            mobileListItem.setId(mobileEntity.getId());
-            mobileListItem.setBrand(mobileEntity.getBrand());
-            mobileListItem.setName(mobileEntity.getName());
-            mobileListItem.setDescription(mobileEntity.getDescription());
-            mobileListItem.setThumbImageURL(mobileEntity.getThumbImageURL());
-            mobileListItem.setPrice("Price: $" + mobileEntity.getPrice());
-            mobileListItem.setRating("Rating:" + mobileEntity.getRating());
-            mobileListItem.setFavorite(mobileEntity.isFavorite());
-            listItem.add(mobileListItem);
+            listItem.add(EntityToListItemMapper.map(getContext(), mobileEntity));
         }
-
         return listItem;
     }
 
     @Override
     public void displayNoData() {
-        // display no data found
+        viewModel.getHasData().set(false);
     }
 
     @Override

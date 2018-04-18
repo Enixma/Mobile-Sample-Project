@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="android.view.View" />
 
+        <variable
+            name="model"
+            type="com.enixma.sample.mobile.presentation.alldevice.MobileListViewModel" />
     </data>
 
     <android.support.v4.widget.SwipeRefreshLayout
@@ -10,19 +15,31 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
+            <TextView
+                android:id="@+id/text_no_data"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/no_data_found"
+                android:gravity="center"
+                android:textSize="18sp"
+                android:visibility="@{model.hasData ? View.GONE:View.VISIBLE}"
+                tools:visibility="gone"/>
+
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/list_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:visibility="@{model.hasData ? View.VISIBLE:View.GONE}" >
 
 
             </android.support.v7.widget.RecyclerView>
-        </LinearLayout>
+        </RelativeLayout>
 
     </android.support.v4.widget.SwipeRefreshLayout>
 

@@ -9,18 +9,25 @@ import java.util.List;
  */
 
 public interface MobileListContract {
-    interface View{
+    interface View {
         void populateList(List<MobileEntity> mobileEntityList);
+
         void displayNoData();
+
         void stopRefreshLoading();
     }
 
     interface Action {
         void getMobileList();
+
         void downloadMobileList();
+
         void sortPriceLowToHigh();
+
         void sortPriceHighToLow();
+
         void sortRatingFiveToOne();
+
         void setFavorite(int position);
     }
 }

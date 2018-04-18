@@ -1,3 +1,12 @@
 <resources>
-    <string name="app_name">Mobile</string>
+    <string name="app_name">MobilePhone</string>
+    <string name="tab_mobile_list">Mobile list</string>
+    <string name="tab_favorite_list">Favorite list</string>
+    <string name="price_prefix">Price: $</string>
+    <string name="rating_prefix">Rating:</string>
+    <string name="sort_by_price_low_to_high">Price low to high</string>
+    <string name="sort_by_price_high_to_low">Price high to low</string>
+    <string name="sort_by_rating_five_to_one">Rating 5-1</string>
+    <string name="no_data_found">No data found</string>
+
 </resources>

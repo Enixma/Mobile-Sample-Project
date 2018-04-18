@@ -19,6 +19,9 @@ import com.enixma.sample.mobile.presentation.alldevice.MobileListFragment;
 import com.enixma.sample.mobile.presentation.favorite.FavoriteListFragment;
 import com.enixma.sample.mobile.presentation.pager.di.DaggerMobilePagerComponent;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 
 /**
@@ -29,7 +32,7 @@ public class MobilePagerFragment extends Fragment {
 
     private LayoutMobilePagerFragmentBinding binding;
     private AlertDialog alertDialog;
-    private CharSequence[] values = {"Price low to high", " Price high to low", "Rating 5 - 1"};
+    private CharSequence[] values;
     private MobileListFragment mobileListFragment;
     private FavoriteListFragment favoriteListFragment;
 
@@ -56,6 +59,7 @@ public class MobilePagerFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        initSortOptions();
         initPager();
     }
 
@@ -64,8 +68,8 @@ public class MobilePagerFragment extends Fragment {
         favoriteListFragment = FavoriteListFragment.newInstance(getSortByCriteria());
         binding.viewPager.setAdapter(new MobilePagerAdapter(getFragmentManager(), mobileListFragment, favoriteListFragment));
         binding.tablayout.setupWithViewPager(binding.viewPager);
-        binding.tablayout.getTabAt(0).setText("Mobile");
-        binding.tablayout.getTabAt(1).setText("Favorite");
+        binding.tablayout.getTabAt(0).setText(getString(R.string.tab_mobile_list));
+        binding.tablayout.getTabAt(1).setText(getString(R.string.tab_favorite_list));
         binding.viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(binding.tablayout));
         binding.tablayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -83,6 +87,14 @@ public class MobilePagerFragment extends Fragment {
 
             }
         });
+    }
+
+    private void initSortOptions(){
+        List<String> listItems = new ArrayList<String>();
+        listItems.add(getString(R.string.sort_by_price_low_to_high));
+        listItems.add(getString(R.string.sort_by_price_high_to_low));
+        listItems.add( getString(R.string.sort_by_rating_five_to_one));
+        values = listItems.toArray(new CharSequence[listItems.size()]);
     }
 
     public void displaySortOptions() {

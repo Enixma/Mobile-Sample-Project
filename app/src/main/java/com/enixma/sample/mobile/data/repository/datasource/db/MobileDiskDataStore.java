@@ -82,7 +82,7 @@ public class MobileDiskDataStore extends RealmDataStore implements IMobileDiskDa
     public Completable updateMobileImage(List<MobileImageEntity> mobileImageEntities) {
 
         if (!mobileImageEntities.isEmpty()) {
-            List<MobileEntity> result = findFirstCopy(MobileEntity.class, "id", mobileImageEntities.get(0).getId());
+            List<MobileEntity> result = findFirstCopy(MobileEntity.class, "id", mobileImageEntities.get(0).getMobileId());
             if (!result.isEmpty()) {
                 MobileEntity mobileEntity = result.get(0);
                 RealmList<MobileImageEntity> imageEntities = new RealmList<MobileImageEntity>();
