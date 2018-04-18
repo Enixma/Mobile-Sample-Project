@@ -16,6 +16,8 @@ public interface IMobileRepository {
 
     Observable<List<MobileEntity>> getAllMobile();
 
+    Observable<List<MobileEntity>> getFavoriteMobile();
+
     Observable<List<MobileEntity>> downloadAllMobile();
 
     Observable<List<MobileImageEntity>> getMobileImages(int mobileId);

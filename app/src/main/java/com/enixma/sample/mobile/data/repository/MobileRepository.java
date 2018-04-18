@@ -36,6 +36,11 @@ public class MobileRepository implements IMobileRepository {
     }
 
     @Override
+    public Observable<List<MobileEntity>> getFavoriteMobile() {
+        return mobileDiskDataStore.getFavoriteMobile();
+    }
+
+    @Override
     public Observable<List<MobileEntity>> downloadAllMobile() {
         return mobileCloudDataStore.getAllMobile()
                 .subscribeOn(Schedulers.io())

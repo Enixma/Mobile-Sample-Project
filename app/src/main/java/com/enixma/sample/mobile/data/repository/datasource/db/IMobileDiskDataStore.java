@@ -16,6 +16,8 @@ public interface IMobileDiskDataStore {
 
     Observable<List<MobileEntity>> getAllMobile();
 
+    Observable<List<MobileEntity>> getFavoriteMobile();
+
     Observable<List<MobileImageEntity>> getMobileImages(int mobileId);
 
     Completable updateMobile(List<MobileEntity> mobileEntities);

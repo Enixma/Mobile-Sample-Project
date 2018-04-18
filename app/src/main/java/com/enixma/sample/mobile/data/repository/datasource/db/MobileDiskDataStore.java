@@ -44,6 +44,12 @@ public class MobileDiskDataStore extends RealmDataStore implements IMobileDiskDa
     }
 
     @Override
+    public Observable<List<MobileEntity>> getFavoriteMobile() {
+        List<MobileEntity> results = findAllCopies(MobileEntity.class, "isFavorite" , true);
+        return Observable.just(results);
+    }
+
+    @Override
     public Observable<List<MobileImageEntity>> getMobileImages(int mobileId) {
         List<MobileImageEntity> results = findAllCopies(MobileImageEntity.class, "mobileId", mobileId);
         return Observable.just(results);

@@ -122,4 +122,16 @@ public abstract class RealmDataStore {
         return results;
     }
 
+    public <E extends RealmObject> List<E> findAllCopies(Class<E> realmClass, String fieldName, boolean value) {
+        List<E> results = new ArrayList<>();
+        beginTransaction();
+        RealmResults<E> realmObjectList = realm.where(realmClass).equalTo(fieldName, value).findAll();
+        if (realmObjectList != null && !realmObjectList.isEmpty()) {
+            results = realm.copyFromRealm(realmObjectList);
+        }
+        commitTransaction();
+
+        return results;
+    }
+
 }
