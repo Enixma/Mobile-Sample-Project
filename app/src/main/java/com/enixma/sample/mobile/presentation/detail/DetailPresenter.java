@@ -7,7 +7,7 @@ import android.arch.lifecycle.OnLifecycleEvent;
 import com.enixma.sample.mobile.domain.downloadmobileimages.DownloadMobileImagesUseCase;
 import com.enixma.sample.mobile.domain.downloadmobileimages.DownloadMobileImagesUseCaseRequest;
 import com.enixma.sample.mobile.domain.downloadmobileimages.DownloadMobileImagesUseCaseResult;
-import com.enixma.sample.mobile.domain.getmobileimages.GetMobileImagesUseCasRequest;
+import com.enixma.sample.mobile.domain.getmobileimages.GetMobileImagesUseCaseRequest;
 import com.enixma.sample.mobile.domain.getmobileimages.GetMobileImagesUseCase;
 import com.enixma.sample.mobile.domain.getmobileimages.GetMobileImagesUseCaseResult;
 
@@ -36,7 +36,7 @@ public class DetailPresenter implements DetailContract.Action, LifecycleObserver
 
     @Override
     public void getMobileImages(final int mobileId) {
-        getMobileImagesDisposable = getMobileImagesUseCase.execute(new GetMobileImagesUseCasRequest(mobileId))
+        getMobileImagesDisposable = getMobileImagesUseCase.execute(new GetMobileImagesUseCaseRequest(mobileId))
                 .doOnNext(new Consumer<GetMobileImagesUseCaseResult>() {
                     @Override
                     public void accept(GetMobileImagesUseCaseResult result) throws Exception {

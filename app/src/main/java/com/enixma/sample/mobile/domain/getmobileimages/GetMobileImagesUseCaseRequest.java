@@ -6,10 +6,10 @@ import com.enixma.sample.mobile.domain.UseCase;
  * Created by nakarinj on 18/4/2018 AD.
  */
 
-public class GetMobileImagesUseCasRequest implements UseCase.Request {
+public class GetMobileImagesUseCaseRequest implements UseCase.Request {
     private int mobileId;
 
-    public GetMobileImagesUseCasRequest(int mobileId) {
+    public GetMobileImagesUseCaseRequest(int mobileId) {
         this.mobileId = mobileId;
     }
 

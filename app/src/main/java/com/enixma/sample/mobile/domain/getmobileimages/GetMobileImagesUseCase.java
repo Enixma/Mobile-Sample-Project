@@ -16,7 +16,7 @@ import io.reactivex.functions.Function;
  * Created by nakarinj on 18/4/2018 AD.
  */
 
-public class GetMobileImagesUseCase implements UseCase<GetMobileImagesUseCasRequest, GetMobileImagesUseCaseResult> {
+public class GetMobileImagesUseCase implements UseCase<GetMobileImagesUseCaseRequest, GetMobileImagesUseCaseResult> {
     public enum Status{
         SUCCESS,
         NO_DATA_FOUND
@@ -29,7 +29,7 @@ public class GetMobileImagesUseCase implements UseCase<GetMobileImagesUseCasRequ
         this.mobileRepository = mobileRepository;
     }
 
-    public Observable<GetMobileImagesUseCaseResult> execute(final GetMobileImagesUseCasRequest request) {
+    public Observable<GetMobileImagesUseCaseResult> execute(final GetMobileImagesUseCaseRequest request) {
         return mobileRepository.getMobileImages(request.getMobileId()).
                 flatMap(new Function<List<MobileImageEntity>, ObservableSource<GetMobileImagesUseCaseResult>>() {
                     @Override
