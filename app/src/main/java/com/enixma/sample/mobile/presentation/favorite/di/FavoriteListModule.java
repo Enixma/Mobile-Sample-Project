@@ -1,6 +1,7 @@
 package com.enixma.sample.mobile.presentation.favorite.di;
 
 import com.enixma.sample.mobile.domain.getfavoritemobile.GetFavoriteMobileUseCase;
+import com.enixma.sample.mobile.domain.savefavorite.SaveFavoriteUseCase;
 import com.enixma.sample.mobile.domain.sortmobile.SortMobileUseCase;
 import com.enixma.sample.mobile.presentation.favorite.FavoriteListContract;
 import com.enixma.sample.mobile.presentation.favorite.FavoriteListPresenter;
@@ -25,8 +26,8 @@ public class FavoriteListModule {
 
     @Provides
     @Inject
-    public FavoriteListContract.Action provideFavoriteListPresenter(GetFavoriteMobileUseCase getFavoriteMobileUseCase) {
-        return new FavoriteListPresenter(view, getFavoriteMobileUseCase, new SortMobileUseCase());
+    public FavoriteListContract.Action provideFavoriteListPresenter(GetFavoriteMobileUseCase getFavoriteMobileUseCase, SaveFavoriteUseCase saveFavoriteUseCase) {
+        return new FavoriteListPresenter(view, getFavoriteMobileUseCase, saveFavoriteUseCase, new SortMobileUseCase());
     }
 
 }

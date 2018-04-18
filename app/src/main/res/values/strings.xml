@@ -8,5 +8,6 @@
     <string name="sort_by_price_high_to_low">Price high to low</string>
     <string name="sort_by_rating_five_to_one">Rating 5-1</string>
     <string name="no_data_found">No data found</string>
+    <string name="remove_favorite_item">Removed from favorite list</string>
 
 </resources>

@@ -150,13 +150,7 @@ public class MobileListPresenter implements MobileListContract.Action, Lifecycle
     public void setFavorite(int pos) {
         MobileEntity mobileEntity = mobileEntityList.get(pos);
         mobileEntity.setFavorite(!mobileEntity.isFavorite());
-        saveFavoriteDisposable = saveFavoriteUseCase.execute(new SaveFavoriteUseCaseRequest(mobileEntity))
-                .doOnNext(new Consumer<SaveFavoriteUseCaseResult>() {
-                    @Override
-                    public void accept(SaveFavoriteUseCaseResult saveFavoriteUseCaseResult) throws Exception {
-                        getMobileList();
-                    }
-                }).subscribe();
+        saveFavoriteDisposable = saveFavoriteUseCase.execute(new SaveFavoriteUseCaseRequest(mobileEntity)).subscribe();
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)

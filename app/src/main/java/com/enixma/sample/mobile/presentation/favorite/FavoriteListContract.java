@@ -16,6 +16,7 @@ public interface FavoriteListContract {
 
     interface Action {
         void getFavoriteList();
+        void removeFromFavorite(int position);
         void sortPriceLowToHigh();
         void sortPriceHighToLow();
         void sortRatingFiveToOne();

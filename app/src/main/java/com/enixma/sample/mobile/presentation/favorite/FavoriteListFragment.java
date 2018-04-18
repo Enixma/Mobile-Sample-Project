@@ -4,12 +4,16 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.enixma.sample.mobile.R;
 import com.enixma.sample.mobile.data.di.MobileDataModule;
@@ -39,6 +43,8 @@ public class FavoriteListFragment extends Fragment implements FavoriteListContra
     private FavoriteListAdapter adapter;
     private ArrayList<FavoriteListItem> items;
     private String sortBy;
+    private Parcelable recyclerViewState;
+    private boolean canRestore;
 
     @Inject
     FavoriteListContract.Action presenter;
@@ -84,7 +90,11 @@ public class FavoriteListFragment extends Fragment implements FavoriteListContra
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser) {
+        if (isVisibleToUser && presenter != null) {
+            if(adapter != null){
+                recyclerViewState = binding.listView.getLayoutManager().onSaveInstanceState();
+                canRestore = true;
+            }
             presenter.getFavoriteList();
         }
     }
@@ -113,6 +123,35 @@ public class FavoriteListFragment extends Fragment implements FavoriteListContra
         binding.listView.setLayoutManager(layoutManager);
         binding.listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+        addSwipeListener();
+        restoreRecyclerViewState();
+    }
+
+    private void restoreRecyclerViewState(){
+        if(recyclerViewState != null && canRestore) {
+            canRestore = false;
+            binding.listView.getLayoutManager().onRestoreInstanceState(recyclerViewState);
+        }
+    }
+
+    private void addSwipeListener() {
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                Toast.makeText(getContext(), getString(R.string.remove_favorite_item), Toast.LENGTH_SHORT).show();
+                final int position = viewHolder.getAdapterPosition();
+                presenter.removeFromFavorite(position);
+            }
+        };
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(binding.listView);
     }
 
     private void goToDetailPage(int position) {

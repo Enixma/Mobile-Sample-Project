@@ -4,6 +4,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -40,6 +41,8 @@ public class MobileListFragment extends Fragment implements MobileListContract.V
     private MobileListAdapter adapter;
     private ArrayList<MobileListItem> items;
     private String sortBy;
+    private Parcelable recyclerViewState;
+    private boolean canRestore;
 
     @Inject
     MobileListContract.Action presenter;
@@ -88,6 +91,18 @@ public class MobileListFragment extends Fragment implements MobileListContract.V
     }
 
     @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser && presenter != null) {
+            if(adapter != null){
+                recyclerViewState = binding.listView.getLayoutManager().onSaveInstanceState();
+                canRestore = true;
+            }
+            presenter.getMobileList();
+        }
+    }
+
+    @Override
     public void populateList(List<MobileEntity> mobileEntityList) {
 
         viewModel.getHasData().set(true);
@@ -106,8 +121,8 @@ public class MobileListFragment extends Fragment implements MobileListContract.V
 
             @Override
             public void onMarkFavorite(int position) {
-                items.get(position).setFavorite(false);
-                adapter.notifyDataSetChanged();
+                items.get(position).setFavorite(!items.get(position).isFavorite());
+                adapter.notifyItemChanged(position);
                 presenter.setFavorite(position);
             }
         });
@@ -116,8 +131,15 @@ public class MobileListFragment extends Fragment implements MobileListContract.V
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         binding.listView.setLayoutManager(layoutManager);
         binding.listView.setAdapter(adapter);
-
         adapter.notifyDataSetChanged();
+        restoreRecyclerViewState();
+    }
+
+    private void restoreRecyclerViewState(){
+        if(recyclerViewState != null && canRestore) {
+            canRestore = false;
+            binding.listView.getLayoutManager().onRestoreInstanceState(recyclerViewState);
+        }
     }
 
     private void goToDetailPage(int position) {
@@ -153,7 +175,6 @@ public class MobileListFragment extends Fragment implements MobileListContract.V
         } else {
             presenter.sortRatingFiveToOne();
         }
-
     }
 
 }

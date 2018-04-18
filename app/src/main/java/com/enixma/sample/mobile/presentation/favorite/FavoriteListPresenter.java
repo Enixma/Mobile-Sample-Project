@@ -8,6 +8,9 @@ import com.enixma.sample.mobile.data.entity.MobileEntity;
 import com.enixma.sample.mobile.domain.getfavoritemobile.GetFavoriteMobileUseCase;
 import com.enixma.sample.mobile.domain.getfavoritemobile.GetFavoriteMobileUseCaseRequest;
 import com.enixma.sample.mobile.domain.getfavoritemobile.GetFavoriteMobileUseCaseResult;
+import com.enixma.sample.mobile.domain.savefavorite.SaveFavoriteUseCase;
+import com.enixma.sample.mobile.domain.savefavorite.SaveFavoriteUseCaseRequest;
+import com.enixma.sample.mobile.domain.savefavorite.SaveFavoriteUseCaseResult;
 import com.enixma.sample.mobile.domain.sortmobile.SortMobileUseCase;
 import com.enixma.sample.mobile.domain.sortmobile.SortMobileUseCaseRequest;
 import com.enixma.sample.mobile.domain.sortmobile.SortMobileUseCaseResult;
@@ -25,8 +28,10 @@ public class FavoriteListPresenter implements FavoriteListContract.Action, Lifec
 
     private FavoriteListContract.View view;
     private GetFavoriteMobileUseCase getFavoriteListUseCase;
+    private SaveFavoriteUseCase saveFavoriteUseCase;
     private SortMobileUseCase sortMobileUseCase;
     private Disposable getFavoriteListDisposable;
+    private Disposable saveFavoriteDisposable;
     private Disposable sortMobileDisposable;
     private boolean isLoading;
     private SortMobileUseCase.SortBy sortBy;
@@ -34,9 +39,11 @@ public class FavoriteListPresenter implements FavoriteListContract.Action, Lifec
 
     public FavoriteListPresenter(FavoriteListContract.View view,
                                  GetFavoriteMobileUseCase getFavoriteListUseCase,
+                                 SaveFavoriteUseCase saveFavoriteUseCase,
                                  SortMobileUseCase sortMobileUseCase) {
         this.view = view;
         this.getFavoriteListUseCase = getFavoriteListUseCase;
+        this.saveFavoriteUseCase = saveFavoriteUseCase;
         this.sortMobileUseCase = sortMobileUseCase;
     }
 
@@ -64,6 +71,20 @@ public class FavoriteListPresenter implements FavoriteListContract.Action, Lifec
             view.displayNoData();
             isLoading = false;
         }
+    }
+
+    @Override
+    public void removeFromFavorite(int position) {
+
+        MobileEntity mobileEntity = mobileEntityList.get(position);
+        mobileEntity.setFavorite(false);
+        saveFavoriteDisposable = saveFavoriteUseCase.execute(new SaveFavoriteUseCaseRequest(mobileEntity))
+                .doOnNext(new Consumer<SaveFavoriteUseCaseResult>() {
+                    @Override
+                    public void accept(SaveFavoriteUseCaseResult saveFavoriteUseCaseResult) throws Exception {
+                        getFavoriteList();
+                    }
+                }).subscribe();
     }
 
     @Override
@@ -105,6 +126,11 @@ public class FavoriteListPresenter implements FavoriteListContract.Action, Lifec
         if (getFavoriteListDisposable != null) {
             getFavoriteListDisposable.dispose();
         }
+
+        if (saveFavoriteDisposable != null) {
+            saveFavoriteDisposable.dispose();
+        }
+
         if (sortMobileDisposable != null) {
             sortMobileDisposable.dispose();
         }
