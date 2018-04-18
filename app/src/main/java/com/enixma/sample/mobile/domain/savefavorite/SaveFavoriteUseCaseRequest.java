@@ -10,6 +10,10 @@ import com.enixma.sample.mobile.domain.UseCase;
 public class SaveFavoriteUseCaseRequest implements UseCase.Request {
     private MobileEntity mobileEntity;
 
+    public SaveFavoriteUseCaseRequest(MobileEntity mobileEntity){
+        this.mobileEntity = mobileEntity;
+    }
+
     public MobileEntity getMobileEntity() {
         return mobileEntity;
     }

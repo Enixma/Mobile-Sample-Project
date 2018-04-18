@@ -26,6 +26,10 @@ android {
         resValue 'integer', 'READ_TIMEOUT_IN_SECOND', '60'
         resValue 'integer', 'WRITE_TIMEOUT_IN_SECOND', '60'
         resValue 'string', 'SHAREDPREF_FILE', 'app'
+        resValue 'string', 'SORTBY_KEY', 'sorting'
+        resValue 'string', 'SORTBY_PRICE_LOW_TO_HIGH', 'price_low_to_high'
+        resValue 'string', 'SORTBY_PRICE_HIGH_TO_LOW', 'price_high_to_low'
+        resValue 'string', 'SORTBY_RATING_FIVE_TO_ONE', 'rating_five_to_one'
     }
     buildTypes {
         release {

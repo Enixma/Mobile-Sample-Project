@@ -14,6 +14,12 @@ public class SortMobileUseCaseRequest implements UseCase.Request {
     private SortMobileUseCase.SortBy sortBy;
     private List<MobileEntity> mobileEntityList;
 
+    public SortMobileUseCaseRequest(SortMobileUseCase.SortBy sortBy, List<MobileEntity> mobileEntityList){
+        this.sortBy = sortBy;
+        this.mobileEntityList = mobileEntityList;
+    }
+
+
     public SortMobileUseCase.SortBy getSortBy() {
         return sortBy;
     }
