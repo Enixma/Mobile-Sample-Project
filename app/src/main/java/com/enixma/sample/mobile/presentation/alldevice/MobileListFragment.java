@@ -19,7 +19,7 @@ import com.enixma.sample.mobile.data.entity.MobileEntity;
 import com.enixma.sample.mobile.databinding.LayoutMobileListFragmentBinding;
 import com.enixma.sample.mobile.presentation.alldevice.di.DaggerMobileListComponent;
 import com.enixma.sample.mobile.presentation.alldevice.di.MobileListModule;
-import com.enixma.sample.mobile.presentation.alldevice.mapper.EntityToListItemMapper;
+import com.enixma.sample.mobile.presentation.alldevice.mapper.EntityToMobileListItemMapper;
 import com.enixma.sample.mobile.presentation.detail.DetailActivity;
 import com.enixma.sample.mobile.presentation.detail.mapper.ListItemToModelMapper;
 
@@ -130,7 +130,7 @@ public class MobileListFragment extends Fragment implements MobileListContract.V
 
         ArrayList<MobileListItem> listItem = new ArrayList();
         for (MobileEntity mobileEntity : mobileEntityList) {
-            listItem.add(EntityToListItemMapper.map(getContext(), mobileEntity));
+            listItem.add(EntityToMobileListItemMapper.map(getContext(), mobileEntity));
         }
         return listItem;
     }

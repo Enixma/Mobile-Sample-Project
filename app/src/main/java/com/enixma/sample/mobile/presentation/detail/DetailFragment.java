@@ -70,6 +70,7 @@ public class DetailFragment extends Fragment implements DetailContract.View {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        getLifecycle().addObserver((DetailPresenter) presenter);
         presenter.getMobileImages(detailModel.getId());
     }
 

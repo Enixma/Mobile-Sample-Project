@@ -13,12 +13,16 @@ public class DetailModel implements Parcelable {
     private String brand;
     private String name;
     private String description;
+    private String rating;
+    private String price;
 
-    public DetailModel(int id, String brand, String name, String description) {
+    public DetailModel(int id, String brand, String name, String description, String rating, String price) {
         this.id = id;
         this.brand = brand;
         this.name = name;
         this.description = description;
+        this.rating = rating;
+        this.price = price;
     }
 
     public int getId() {
@@ -53,6 +57,22 @@ public class DetailModel implements Parcelable {
         this.description = description;
     }
 
+    public String getRating() {
+        return rating;
+    }
+
+    public void setRating(String rating) {
+        this.rating = rating;
+    }
+
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -64,9 +84,8 @@ public class DetailModel implements Parcelable {
         dest.writeString(this.brand);
         dest.writeString(this.name);
         dest.writeString(this.description);
-    }
-
-    public DetailModel() {
+        dest.writeString(this.rating);
+        dest.writeString(this.price);
     }
 
     protected DetailModel(Parcel in) {
@@ -74,9 +93,11 @@ public class DetailModel implements Parcelable {
         this.brand = in.readString();
         this.name = in.readString();
         this.description = in.readString();
+        this.rating = in.readString();
+        this.price = in.readString();
     }
 
-    public static final Parcelable.Creator<DetailModel> CREATOR = new Parcelable.Creator<DetailModel>() {
+    public static final Creator<DetailModel> CREATOR = new Creator<DetailModel>() {
         @Override
         public DetailModel createFromParcel(Parcel source) {
             return new DetailModel(source);

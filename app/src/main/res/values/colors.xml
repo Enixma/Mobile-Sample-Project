@@ -5,4 +5,5 @@
     <color name="colorAccent">#FF4081</color>
     <color name="white">#FFFFFF</color>
     <color name="silver">#B2B2B2</color>
+    <color name="overlay">#3F000000</color>
 </resources>

@@ -20,7 +20,7 @@ import com.enixma.sample.mobile.presentation.detail.DetailActivity;
 import com.enixma.sample.mobile.presentation.detail.mapper.ListItemToModelMapper;
 import com.enixma.sample.mobile.presentation.favorite.di.DaggerFavoriteListComponent;
 import com.enixma.sample.mobile.presentation.favorite.di.FavoriteListModule;
-import com.enixma.sample.mobile.presentation.favorite.mapper.EntityToListItemMapper;
+import com.enixma.sample.mobile.presentation.favorite.mapper.EntityToFavoriteListItemMapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -125,7 +125,7 @@ public class FavoriteListFragment extends Fragment implements FavoriteListContra
 
         ArrayList<FavoriteListItem> listItem = new ArrayList();
         for (MobileEntity mobileEntity : mobileEntityList) {
-            listItem.add(EntityToListItemMapper.map(getContext(), mobileEntity));
+            listItem.add(EntityToFavoriteListItemMapper.map(getContext(), mobileEntity));
         }
 
         return listItem;

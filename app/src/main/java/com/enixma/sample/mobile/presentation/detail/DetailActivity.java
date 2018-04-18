@@ -23,34 +23,34 @@ public class DetailActivity extends AppCompatActivity {
 
         initToolbar();
 
-        if(getIntent().hasExtra(MOBILE)) {
+        if (getIntent().hasExtra(MOBILE)) {
             DetailModel detailModel = getIntent().getParcelableExtra(MOBILE);
             addFragment(detailModel);
-        } else{
+        } else {
             finish();
         }
     }
 
-    private void initToolbar(){
+    private void initToolbar() {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
     }
 
-    private void addFragment(DetailModel detailModel ){
+    private void addFragment(DetailModel detailModel) {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.detail_fragment_host, DetailFragment.newInstance(detailModel))
                 .commit();
     }
 
     @Override
-    public boolean onSupportNavigateUp(){
+    public boolean onSupportNavigateUp() {
         finish();
         return true;
     }
 
-    public static Intent getIntent(Context context){
+    public static Intent getIntent(Context context) {
         return new Intent(context, DetailActivity.class);
     }
 }

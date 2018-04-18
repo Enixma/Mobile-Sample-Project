@@ -11,11 +11,11 @@ import com.enixma.sample.mobile.presentation.favorite.FavoriteListItem;
 public class ListItemToModelMapper {
 
     public static DetailModel map(MobileListItem item){
-        return new DetailModel(item.getId(), item.getBrand(), item.getName(), item.getDescription());
+        return new DetailModel(item.getId(), item.getBrand(), item.getName(), item.getDescription(), item.getRating(), item.getPrice());
     }
 
     public static DetailModel map(FavoriteListItem item){
-        return new DetailModel(item.getId(), item.getBrand(), item.getName(), item.getDescription());
+        return new DetailModel(item.getId(), item.getBrand(), item.getName(), item.getDescription(), item.getRating(), item.getPrice());
     }
 
 }
