@@ -6,6 +6,7 @@ import com.enixma.sample.mobile.data.entity.MobileEntity;
 import com.enixma.sample.mobile.data.entity.MobileImageEntity;
 import com.enixma.sample.mobile.data.entity.MobileRealmModule;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Completable;
@@ -21,10 +22,8 @@ import io.realm.RealmList;
 public class MobileDiskDataStore extends RealmDataStore implements IMobileDiskDataStore {
 
     private RealmConfiguration realmConfiguration;
-    private Context context;
 
     public MobileDiskDataStore(Context context) {
-        this.context = context;
         Realm.init(context);
         this.realmConfiguration = new RealmConfiguration.Builder()
                 .name(context.getPackageName().concat(".mobile.realm"))
@@ -39,20 +38,29 @@ public class MobileDiskDataStore extends RealmDataStore implements IMobileDiskDa
 
     @Override
     public Observable<List<MobileEntity>> getAllMobile() {
-        List<MobileEntity> results = findAllCopies(MobileEntity.class);
-        return Observable.just(results);
+        return findAllCopies(MobileEntity.class);
     }
 
     @Override
     public Observable<List<MobileEntity>> getFavoriteMobile() {
-        List<MobileEntity> results = findAllCopies(MobileEntity.class, "isFavorite" , true);
-        return Observable.just(results);
+        return findAllCopies(MobileEntity.class, "isFavorite", true);
     }
 
     @Override
     public Observable<List<MobileImageEntity>> getMobileImages(int mobileId) {
-        List<MobileImageEntity> results = findAllCopies(MobileImageEntity.class, "mobileId", mobileId);
-        return Observable.just(results);
+
+        List<MobileImageEntity> result = new ArrayList<>();
+        List<MobileEntity> mobiles = findFirstCopy(MobileEntity.class, "id", mobileId);
+        if (mobiles == null || mobiles.isEmpty()) {
+            return Observable.just(result);
+        } else {
+            MobileEntity mobileEntity = mobiles.get(0);
+            if (mobileEntity.getMobileImageEntities() != null && !mobileEntity.getMobileImageEntities().isEmpty()) {
+                result.addAll(mobileEntity.getMobileImageEntities());
+                return Observable.just(result);
+            }
+            return Observable.just(result);
+        }
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.enixma.sample.mobile.presentation.detail;
 
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -33,6 +34,8 @@ public class DetailFragment extends Fragment implements DetailContract.View {
     private DetailImageListAdapter adapter;
     private ArrayList<DetailImageItem> items;
     private DetailModel detailModel;
+    private Parcelable recyclerViewState;
+    private boolean canRestore;
 
     @Inject
     DetailContract.Action presenter;
@@ -76,6 +79,9 @@ public class DetailFragment extends Fragment implements DetailContract.View {
 
     @Override
     public void populateList(List<MobileImageEntity> mobileImageEntities) {
+
+        saveRecyclerViewState();
+
         if (items == null) {
             items = new ArrayList<>();
         }
@@ -90,6 +96,21 @@ public class DetailFragment extends Fragment implements DetailContract.View {
         binding.listView.setAdapter(adapter);
 
         adapter.notifyDataSetChanged();
+        restoreRecyclerViewState();
+    }
+
+    private void saveRecyclerViewState() {
+        if (adapter != null) {
+            recyclerViewState = binding.listView.getLayoutManager().onSaveInstanceState();
+            canRestore = true;
+        }
+    }
+
+    private void restoreRecyclerViewState() {
+        if (recyclerViewState != null && canRestore) {
+            canRestore = false;
+            binding.listView.getLayoutManager().onRestoreInstanceState(recyclerViewState);
+        }
     }
 
     private ArrayList<DetailImageItem> getDetailImageListItems(List<MobileImageEntity> mobileImageEntities) {

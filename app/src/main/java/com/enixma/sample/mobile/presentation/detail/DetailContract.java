@@ -15,5 +15,6 @@ public interface DetailContract {
 
     interface Action {
         void getMobileImages(int mobileId);
+        void downloadImages(int mobileId);
     }
 }

@@ -85,23 +85,13 @@ public class FavoriteListFragment extends Fragment implements FavoriteListContra
 
         getLifecycle().addObserver((FavoriteListPresenter) presenter);
         updateSortCriteria(sortBy);
-    }
-
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser && presenter != null) {
-            if(adapter != null){
-                recyclerViewState = binding.listView.getLayoutManager().onSaveInstanceState();
-                canRestore = true;
-            }
-            presenter.getFavoriteList();
-        }
+        presenter.getFavoriteList();
     }
 
     @Override
     public void populateList(List<MobileEntity> mobileEntityList) {
 
+        saveRecyclerViewState();
         viewModel.getHasData().set(true);
 
         if (items == null) {
@@ -125,6 +115,13 @@ public class FavoriteListFragment extends Fragment implements FavoriteListContra
         adapter.notifyDataSetChanged();
         addSwipeListener();
         restoreRecyclerViewState();
+    }
+
+    private void saveRecyclerViewState(){
+        if(adapter != null){
+            recyclerViewState = binding.listView.getLayoutManager().onSaveInstanceState();
+            canRestore = true;
+        }
     }
 
     private void restoreRecyclerViewState(){

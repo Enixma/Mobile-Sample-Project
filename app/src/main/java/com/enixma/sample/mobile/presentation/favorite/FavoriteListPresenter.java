@@ -33,7 +33,6 @@ public class FavoriteListPresenter implements FavoriteListContract.Action, Lifec
     private Disposable getFavoriteListDisposable;
     private Disposable saveFavoriteDisposable;
     private Disposable sortMobileDisposable;
-    private boolean isLoading;
     private SortMobileUseCase.SortBy sortBy;
     private List<MobileEntity> mobileEntityList;
 
@@ -49,10 +48,6 @@ public class FavoriteListPresenter implements FavoriteListContract.Action, Lifec
 
     @Override
     public void getFavoriteList() {
-        if (isLoading) {
-            return;
-        }
-        isLoading = true;
 
         getFavoriteListDisposable = getFavoriteListUseCase.execute(new GetFavoriteMobileUseCaseRequest())
                 .doOnNext(new Consumer<GetFavoriteMobileUseCaseResult>() {
@@ -69,7 +64,6 @@ public class FavoriteListPresenter implements FavoriteListContract.Action, Lifec
             sortList();
         } else {
             view.displayNoData();
-            isLoading = false;
         }
     }
 
@@ -90,24 +84,23 @@ public class FavoriteListPresenter implements FavoriteListContract.Action, Lifec
     @Override
     public void sortPriceLowToHigh() {
         sortBy = SortMobileUseCase.SortBy.PRICE_LOW_TO_HIGH;
-        getFavoriteList();
+        sortList();
     }
 
     @Override
     public void sortPriceHighToLow() {
         sortBy = SortMobileUseCase.SortBy.PRICE_HIGH_TO_LOW;
-        getFavoriteList();
+        sortList();
     }
 
     @Override
     public void sortRatingFiveToOne() {
         sortBy = SortMobileUseCase.SortBy.RATING_FIVE_TO_ONE;
-        getFavoriteList();
+        sortList();
     }
 
     private void sortList() {
         if (mobileEntityList == null || mobileEntityList.isEmpty()) {
-            isLoading = false;
             return;
         }
 
@@ -116,7 +109,6 @@ public class FavoriteListPresenter implements FavoriteListContract.Action, Lifec
                     @Override
                     public void accept(SortMobileUseCaseResult sortMobileUseCaseResult) throws Exception {
                         view.populateList(sortMobileUseCaseResult.getMobileEntityList());
-                        isLoading = false;
                     }
                 }).subscribe();
     }
