@@ -19,6 +19,8 @@ import com.enixma.sample.mobile.R;
 import com.enixma.sample.mobile.data.di.MobileDataModule;
 import com.enixma.sample.mobile.data.di.ServiceFactoryModule;
 import com.enixma.sample.mobile.data.entity.MobileEntity;
+import com.enixma.sample.mobile.data.entity.MobileRealmModule;
+import com.enixma.sample.mobile.data.repository.datasource.db.MobileRealmInstanceFactory;
 import com.enixma.sample.mobile.databinding.LayoutFavoriteListFragmentBinding;
 import com.enixma.sample.mobile.presentation.detail.DetailActivity;
 import com.enixma.sample.mobile.presentation.detail.mapper.ListItemToModelMapper;
@@ -30,6 +32,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 
 /**
  * Created by nakarinj on 18/4/2018 AD.
@@ -45,6 +50,7 @@ public class FavoriteListFragment extends Fragment implements FavoriteListContra
     private String sortBy;
     private Parcelable recyclerViewState;
     private boolean canRestore;
+    private Realm realm;
 
     @Inject
     FavoriteListContract.Action presenter;
@@ -60,12 +66,12 @@ public class FavoriteListFragment extends Fragment implements FavoriteListContra
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        realm =  MobileRealmInstanceFactory.getRealmInstance(getContext());
         viewModel = ViewModelProviders.of(this).get(FavoriteListViewModel.class);
         this.sortBy = getArguments().getString(SORT_BY);
         DaggerFavoriteListComponent.builder()
                 .serviceFactoryModule(new ServiceFactoryModule(getContext()))
-                .mobileDataModule(new MobileDataModule(getContext()))
+                .mobileDataModule(new MobileDataModule(getContext(), realm))
                 .favoriteListModule(new FavoriteListModule(this))
                 .build().inject(this);
 
@@ -182,4 +188,9 @@ public class FavoriteListFragment extends Fragment implements FavoriteListContra
         }
     }
 
+    @Override
+    public void onDestroy() {
+        realm.close();
+        super.onDestroy();
+    }
 }

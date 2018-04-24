@@ -17,24 +17,11 @@ import io.realm.rx.CollectionChange;
  */
 public abstract class RealmDataStore {
 
-    private Realm realm;
-
-    public abstract RealmConfiguration getRealmConfiguration();
+    protected Realm realm;
 
     private void beginTransaction() {
-        if (realm == null || realm.isClosed()) {
-            getRealmInstance();
-        }
         if (!realm.isInTransaction()) {
             realm.beginTransaction();
-        }
-    }
-
-    private void getRealmInstance() {
-        if (getRealmConfiguration() != null) {
-            realm = Realm.getInstance(getRealmConfiguration());
-        } else {
-            realm = Realm.getDefaultInstance();
         }
     }
 
@@ -46,7 +33,6 @@ public abstract class RealmDataStore {
 
     public <E extends RealmObject> List<E> findFirstCopy(Class<E> realmClass) {
         List<E> results = new ArrayList<>();
-        getRealmInstance();
         E realmObject = realm.where(realmClass).findFirst();
         if (realmObject != null) {
             E result = realm.copyFromRealm(realmObject);
@@ -57,7 +43,6 @@ public abstract class RealmDataStore {
 
     public <E extends RealmObject> List<E> findFirstCopy(Class<E> realmClass, String fieldName, String value) {
         List<E> results = new ArrayList<>();
-        getRealmInstance();
         E realmObject = realm.where(realmClass).equalTo(fieldName, value).findFirst();
         if (realmObject != null) {
             E result = realm.copyFromRealm(realmObject);
@@ -69,7 +54,6 @@ public abstract class RealmDataStore {
 
     public <E extends RealmObject> List<E> findFirstCopy(Class<E> realmClass, String fieldName, int value) {
         List<E> results = new ArrayList<>();
-        getRealmInstance();
         E realmObject = realm.where(realmClass).equalTo(fieldName, value).findFirst();
         if (realmObject != null) {
             E result = realm.copyFromRealm(realmObject);
@@ -80,7 +64,6 @@ public abstract class RealmDataStore {
     }
 
     public <E extends RealmObject> Observable<List<E>> findAllCopies(Class<E> realmClass) {
-        getRealmInstance();
         return realm.where(realmClass)
                 .findAllAsync()
                 .asChangesetObservable()
@@ -98,7 +81,6 @@ public abstract class RealmDataStore {
     }
 
     public <E extends RealmObject> Observable<List<E>> findAllCopies(Class<E> realmClass, String fieldName, String value) {
-        getRealmInstance();
         return realm.where(realmClass)
                 .equalTo(fieldName, value)
                 .findAllAsync()
@@ -116,7 +98,6 @@ public abstract class RealmDataStore {
     }
 
     public <E extends RealmObject> Observable<List<E>> findAllCopies(Class<E> realmClass, String fieldName, int value) {
-        getRealmInstance();
         return realm.where(realmClass)
                 .equalTo(fieldName, value)
                 .findAllAsync()
@@ -134,7 +115,6 @@ public abstract class RealmDataStore {
     }
 
     public <E extends RealmObject> Observable<List<E>> findAllCopies(Class<E> realmClass, String fieldName, boolean value) {
-        getRealmInstance();
         return realm.where(realmClass)
                 .equalTo(fieldName, value)
                 .findAllAsync()

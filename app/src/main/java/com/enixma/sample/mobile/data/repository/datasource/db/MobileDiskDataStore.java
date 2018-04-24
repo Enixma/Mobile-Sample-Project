@@ -21,19 +21,8 @@ import io.realm.RealmList;
 
 public class MobileDiskDataStore extends RealmDataStore implements IMobileDiskDataStore {
 
-    private RealmConfiguration realmConfiguration;
-
-    public MobileDiskDataStore(Context context) {
-        Realm.init(context);
-        this.realmConfiguration = new RealmConfiguration.Builder()
-                .name(context.getPackageName().concat(".mobile.realm"))
-                .modules(new MobileRealmModule())
-                .deleteRealmIfMigrationNeeded()
-                .build();
-    }
-
-    public RealmConfiguration getRealmConfiguration() {
-        return realmConfiguration;
+    public MobileDiskDataStore(Realm realm) {
+        this.realm = realm;
     }
 
     @Override

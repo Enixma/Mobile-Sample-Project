@@ -14,6 +14,8 @@ import com.enixma.sample.mobile.R;
 import com.enixma.sample.mobile.data.di.MobileDataModule;
 import com.enixma.sample.mobile.data.di.ServiceFactoryModule;
 import com.enixma.sample.mobile.data.entity.MobileImageEntity;
+import com.enixma.sample.mobile.data.entity.MobileRealmModule;
+import com.enixma.sample.mobile.data.repository.datasource.db.MobileRealmInstanceFactory;
 import com.enixma.sample.mobile.databinding.LayoutDetailFragmentBinding;
 import com.enixma.sample.mobile.presentation.detail.di.DaggerDetailComponent;
 import com.enixma.sample.mobile.presentation.detail.di.DetailModule;
@@ -23,19 +25,23 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+
 /**
  * Created by nakarinj on 18/4/2018 AD.
  */
 
 public class DetailFragment extends Fragment implements DetailContract.View {
 
-    private static String MOBILE = "mobile";
+    private static final String MOBILE = "mobile";
     private LayoutDetailFragmentBinding binding;
     private DetailImageListAdapter adapter;
     private ArrayList<DetailImageItem> items;
     private DetailModel detailModel;
     private Parcelable recyclerViewState;
     private boolean canRestore;
+    private Realm realm;
 
     @Inject
     DetailContract.Action presenter;
@@ -53,9 +59,10 @@ public class DetailFragment extends Fragment implements DetailContract.View {
         super.onCreate(savedInstanceState);
 
         this.detailModel = getArguments().getParcelable(MOBILE);
+        realm = MobileRealmInstanceFactory.getRealmInstance(getContext());
         DaggerDetailComponent.builder()
                 .serviceFactoryModule(new ServiceFactoryModule(getContext()))
-                .mobileDataModule(new MobileDataModule(getContext()))
+                .mobileDataModule(new MobileDataModule(getContext(), realm))
                 .detailModule(new DetailModule(this))
                 .build().inject(this);
     }
@@ -119,5 +126,11 @@ public class DetailFragment extends Fragment implements DetailContract.View {
             imageItems.add(new DetailImageItem(mobileImageEntity.getUrl()));
         }
         return imageItems;
+    }
+
+    @Override
+    public void onDestroy() {
+        realm.close();
+        super.onDestroy();
     }
 }

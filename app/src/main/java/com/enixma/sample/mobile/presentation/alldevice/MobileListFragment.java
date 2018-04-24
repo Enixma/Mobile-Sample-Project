@@ -17,6 +17,8 @@ import com.enixma.sample.mobile.R;
 import com.enixma.sample.mobile.data.di.MobileDataModule;
 import com.enixma.sample.mobile.data.di.ServiceFactoryModule;
 import com.enixma.sample.mobile.data.entity.MobileEntity;
+import com.enixma.sample.mobile.data.entity.MobileRealmModule;
+import com.enixma.sample.mobile.data.repository.datasource.db.MobileRealmInstanceFactory;
 import com.enixma.sample.mobile.databinding.LayoutMobileListFragmentBinding;
 import com.enixma.sample.mobile.presentation.alldevice.di.DaggerMobileListComponent;
 import com.enixma.sample.mobile.presentation.alldevice.di.MobileListModule;
@@ -28,6 +30,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 
 /**
  * Created by nakarinj on 18/4/2018 AD.
@@ -43,6 +48,7 @@ public class MobileListFragment extends Fragment implements MobileListContract.V
     private String sortBy;
     private Parcelable recyclerViewState;
     private boolean canRestore;
+    private Realm realm;
 
     @Inject
     MobileListContract.Action presenter;
@@ -58,12 +64,12 @@ public class MobileListFragment extends Fragment implements MobileListContract.V
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        realm =  MobileRealmInstanceFactory.getRealmInstance(getContext());
         viewModel = ViewModelProviders.of(this).get(MobileListViewModel.class);
         this.sortBy = getArguments().getString(SORT_BY);
         DaggerMobileListComponent.builder()
                 .serviceFactoryModule(new ServiceFactoryModule(getContext()))
-                .mobileDataModule(new MobileDataModule(getContext()))
+                .mobileDataModule(new MobileDataModule(getContext(), realm))
                 .mobileListModule(new MobileListModule(this))
                 .build().inject(this);
     }
@@ -174,4 +180,9 @@ public class MobileListFragment extends Fragment implements MobileListContract.V
         }
     }
 
+    @Override
+    public void onDestroy() {
+        realm.close();
+        super.onDestroy();
+    }
 }
