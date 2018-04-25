@@ -15,6 +15,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import io.realm.Realm;
 import retrofit2.Retrofit;
 
 /**
@@ -23,16 +24,18 @@ import retrofit2.Retrofit;
 @Module
 public class MobileDataModule {
 
-    Context context;
+    private Context context;
+    private Realm realm;
 
-    public MobileDataModule(Context context){
+    public MobileDataModule(Context context, Realm realm){
         this.context = context;
+        this.realm = realm;
     }
 
     @Provides
     @Singleton
     IMobileDiskDataStore provideMobileDiskDataStore() {
-        return new MobileDiskDataStore(context);
+        return new MobileDiskDataStore(realm);
     }
 
 

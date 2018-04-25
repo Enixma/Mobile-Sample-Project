@@ -48,27 +48,27 @@ public class DetailPresenter implements DetailContract.Action, LifecycleObserver
     private void processGetImagesResult(int mobileId, GetMobileImagesUseCaseResult result) {
         if (result.getStatus() == GetMobileImagesUseCase.Status.SUCCESS) {
             view.populateList(result.getMobileImageEntityList());
-            downloadImages(mobileId);
-        } else {
-            downloadImages(mobileId);
         }
+        downloadImages(mobileId);
     }
 
-    private void downloadImages(int mobileId) {
+    @Override
+    public void downloadImages(final int mobileId) {
         downloadMobileImagesDisposable = downloadMobileImagesUseCase.execute(new DownloadMobileImagesUseCaseRequest(mobileId))
                 .doOnNext(new Consumer<DownloadMobileImagesUseCaseResult>() {
                     @Override
                     public void accept(DownloadMobileImagesUseCaseResult result) throws Exception {
-                        processDownloadImagesResult(result);
+                        processDownloadMobileImagesResult(result);
                     }
                 }).subscribe();
     }
 
-    private void processDownloadImagesResult(DownloadMobileImagesUseCaseResult result) {
-        if (result.getStatus() == DownloadMobileImagesUseCase.Status.SUCCESS) {
+    private void processDownloadMobileImagesResult(DownloadMobileImagesUseCaseResult result){
+        if(result.getStatus() == DownloadMobileImagesUseCase.Status.SUCCESS){
             view.populateList(result.getMobileImageEntityList());
         }
     }
+
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     public void onPresenterDestroy() {

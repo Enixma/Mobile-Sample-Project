@@ -56,10 +56,6 @@ public class MobileListPresenter implements MobileListContract.Action, Lifecycle
 
     @Override
     public void getMobileList() {
-        if (isLoading) {
-            return;
-        }
-        isLoading = true;
 
         getAllMobileDisposable = getAllMobileUseCase.execute(new GetAllMobileUseCaseRequest())
                 .doOnNext(new Consumer<GetAllMobileUseCaseResult>() {
@@ -76,7 +72,6 @@ public class MobileListPresenter implements MobileListContract.Action, Lifecycle
             sortList();
         } else {
             view.displayNoData();
-            isLoading = false;
             downloadMobileList();
         }
     }
@@ -85,9 +80,9 @@ public class MobileListPresenter implements MobileListContract.Action, Lifecycle
     public void downloadMobileList() {
 
         if (isLoading) {
-            view.stopRefreshLoading();
             return;
         }
+
         isLoading = true;
 
         downloadMobileDisposable = downloadMobileUseCase.execute(new DownloadMobileUseCaseRequest())
@@ -100,14 +95,9 @@ public class MobileListPresenter implements MobileListContract.Action, Lifecycle
     }
 
     private void processDownloadMobileListResult(DownloadMobileUseCaseResult result) {
-
         view.stopRefreshLoading();
-
-        if (result.getStatus() == DownloadMobileUseCase.Status.SUCCESS) {
-            isLoading = false;
-            getMobileList();
-        } else {
-            isLoading = false;
+        isLoading = false;
+        if (result.getStatus() != DownloadMobileUseCase.Status.SUCCESS) {
             view.displayNoData();
         }
     }
@@ -115,24 +105,23 @@ public class MobileListPresenter implements MobileListContract.Action, Lifecycle
     @Override
     public void sortPriceLowToHigh() {
         sortBy = SortMobileUseCase.SortBy.PRICE_LOW_TO_HIGH;
-        getMobileList();
+        sortList();
     }
 
     @Override
     public void sortPriceHighToLow() {
         sortBy = SortMobileUseCase.SortBy.PRICE_HIGH_TO_LOW;
-        getMobileList();
+        sortList();
     }
 
     @Override
     public void sortRatingFiveToOne() {
         sortBy = SortMobileUseCase.SortBy.RATING_FIVE_TO_ONE;
-        getMobileList();
+        sortList();
     }
 
     private void sortList() {
         if (mobileEntityList == null || mobileEntityList.isEmpty()) {
-            isLoading = false;
             return;
         }
 
@@ -141,7 +130,6 @@ public class MobileListPresenter implements MobileListContract.Action, Lifecycle
                     @Override
                     public void accept(SortMobileUseCaseResult sortMobileUseCaseResult) throws Exception {
                         view.populateList(sortMobileUseCaseResult.getMobileEntityList());
-                        isLoading = false;
                     }
                 }).subscribe();
     }

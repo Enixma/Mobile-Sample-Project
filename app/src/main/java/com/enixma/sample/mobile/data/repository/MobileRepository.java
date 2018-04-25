@@ -10,8 +10,8 @@ import java.util.List;
 
 import io.reactivex.Completable;
 import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
@@ -51,16 +51,12 @@ public class MobileRepository implements IMobileRepository {
                     public List<MobileEntity> apply(Throwable throwable) throws Exception {
                         return new ArrayList<MobileEntity>();
                     }
-                }).doOnNext(new Consumer<List<MobileEntity>>() {
+                }).flatMap(new Function<List<MobileEntity>, ObservableSource<List<MobileEntity>>>() {
                     @Override
-                    public void accept(List<MobileEntity> mobileEntities) throws Exception {
-                        updateAndRetrieveAllMobileFromDB(mobileEntities);
+                    public ObservableSource<List<MobileEntity>> apply(List<MobileEntity> mobileEntities) throws Exception {
+                        return mobileDiskDataStore.updateMobile(mobileEntities).andThen(Observable.just(mobileEntities));
                     }
                 });
-    }
-
-    private Observable<List<MobileEntity>> updateAndRetrieveAllMobileFromDB(List<MobileEntity> mobileEntities){
-        return mobileDiskDataStore.updateMobile(mobileEntities).andThen(mobileDiskDataStore.getAllMobile());
     }
 
     @Override
@@ -79,16 +75,12 @@ public class MobileRepository implements IMobileRepository {
                     public List<MobileImageEntity> apply(Throwable throwable) throws Exception {
                         return new ArrayList<MobileImageEntity>();
                     }
-                }).doOnNext(new Consumer<List<MobileImageEntity>>() {
+                }).flatMap(new Function<List<MobileImageEntity>, ObservableSource<List<MobileImageEntity>>>() {
                     @Override
-                    public void accept(List<MobileImageEntity> mobileImageEntities) throws Exception {
-                        updateAndRetrieveMobileImagesFromDB(mobileId, mobileImageEntities);
+                    public ObservableSource<List<MobileImageEntity>> apply(List<MobileImageEntity> mobileImageEntities) throws Exception {
+                        return mobileDiskDataStore.updateMobileImage(mobileImageEntities).andThen(Observable.just(mobileImageEntities));
                     }
                 });
-    }
-
-    private Observable<List<MobileImageEntity>> updateAndRetrieveMobileImagesFromDB(int mobileId, List<MobileImageEntity> mobileEntities){
-        return mobileDiskDataStore.updateMobileImage(mobileEntities).andThen(mobileDiskDataStore.getMobileImages(mobileId));
     }
 
     @Override
