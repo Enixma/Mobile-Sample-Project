@@ -22,8 +22,24 @@ jobs:
           paths:
             - ~/.gradle
       - run:
-          name: Build Application
-          command: ./gradlew clean assembleDebug
+          name: Build Project
+          command: ./gradlew clean build
+  test:
+    working_directory: ~/code
+    docker:
+      - image: circleci/android:api-26
+    environment:
+      JVM_OPTS: -Xmx3200m
+    steps:
+      - checkout
+      - restore_cache:
+          name: Restore Cache Gradle
+          keys:
+            - jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+            - jars-
+      - run:
+          name: Run test
+          command: ./gradlew test
       - store_artifacts:
           name: Upload Artifacts Reports
           path: app/build/reports
@@ -31,7 +47,43 @@ jobs:
       - store_artifacts:
           name: Upload Artifacts Reports
           path: app/build/test-results
+
+  assemble:
+    working_directory: ~/code
+    docker:
+      - image: circleci/android:api-26
+    environment:
+      JVM_OPTS: -Xmx3200m
+    steps:
+      - checkout
+      - restore_cache:
+          name: Restore Cache Gradle
+          keys:
+            - jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+            - jars-
+      - run:
+          name: Build prodApi16Debug
+          command: ./gradlew clean assembleProdApi16Debug
+      - run:
+          name: Build prodApi16Release
+          command: ./gradlew clean assembleProdApi16Release
       - store_artifacts:
           name: Upload Artifacts File APK
           path: app/build/outputs/apk
           destination: apk
+workflows:
+  version: 2
+  pipeline:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+      - assemble:
+          requires:
+            - build
+            - tests
+            filters:
+              branches:
+                only:
+                  - develop
