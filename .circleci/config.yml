@@ -82,8 +82,8 @@ workflows:
       - assemble:
           requires:
             - build
-            - tests
-            filters:
-              branches:
-                only:
-                  - develop
+            - test
+          filters:
+            branches:
+              only:
+              - develop
