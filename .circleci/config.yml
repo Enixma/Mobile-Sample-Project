@@ -1,0 +1,37 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/code
+    docker:
+      - image: circleci/android:api-26
+    environment:
+      JVM_OPTS: -Xmx3200m
+    steps:
+      - checkout
+      - restore_cache:
+          name: Restore Cache Gradle
+          keys:
+            - jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+            - jars-
+      - run:
+          name: Download Dependencies
+          command: ./gradlew androidDependencies
+      - save_cache:
+          name: Save Cache Gradle
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+          paths:
+            - ~/.gradle
+      - run:
+          name: Build Application
+          command: ./gradlew clean assembleDebug
+      - store_artifacts:
+          name: Upload Artifacts Reports
+          path: app/build/reports
+          destination: reports
+      - store_artifacts:
+          name: Upload Artifacts Reports
+          path: app/build/test-results
+      - store_artifacts:
+          name: Upload Artifacts File APK
+          path: app/build/outputs/apk
+          destination: apk
