@@ -73,13 +73,18 @@ workflows:
   pipeline:
     jobs:
       - build
-        type: approval
+      - hold:
+          type: approval
+          requires:
+            -build
       - test:
           requires:
             - build
+            - hold
       - assemble:
           requires:
             - build
+            - hold
             - test
           filters:
             branches:
