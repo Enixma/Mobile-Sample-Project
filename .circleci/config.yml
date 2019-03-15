@@ -63,10 +63,7 @@ jobs:
             - jars-
       - run:
           name: Build prodApi16Debug
-          command: ./gradlew clean assembleProdApi16Debug
-      - run:
-          name: Build prodApi16Release
-          command: ./gradlew clean assembleProdApi16Release
+          command: ./gradlew clean ${ASSEMBLE_COMMAND}
       - store_artifacts:
           name: Upload Artifacts File APK
           path: app/build/outputs/apk
