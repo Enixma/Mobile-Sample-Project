@@ -43,5 +43,3 @@ build:
   artifacts:
     paths:
       - app/build/outputs/
-  only:
-    - tags
