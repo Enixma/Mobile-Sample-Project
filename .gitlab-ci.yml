@@ -35,7 +35,7 @@ build:
     - ./gradlew assembleRelease
 
     only:
-    - develop
+    - master
   artifacts:
     paths:
       - app/build/outputs/
